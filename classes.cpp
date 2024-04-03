@@ -1,5 +1,6 @@
 #include "classes.h"
 
+#include <QDebug>
 ////////////////card/////////////
 Card::Card(rank r , suit s, bool fu) : m_rank(r), m_suit(s), m_face(fu){}
 int Card::GetValue()const {
@@ -135,6 +136,7 @@ void deck::AddCard(GenPlayer& aGenP){
 
 ////////////////////////////////game
 game::game(const vector<string>& name){
+    qDebug()<<"hello";
     vector<string>::const_iterator pName;
     for(pName = name.begin(); pName != name.end(); ++pName)
         m_players.push_back(player(*pName));
@@ -142,7 +144,8 @@ game::game(const vector<string>& name){
     m_deck.populate();
     m_deck.shuffle();
 };
-void game::play(){
+string game::play(){
+    string res = "";
     vector<player>::iterator pPlayer;
     for (int i=0;i<2;i++){
         for (pPlayer = m_players.begin(); pPlayer !=m_players.end(); ++pPlayer)
@@ -151,31 +154,49 @@ void game::play(){
     }
     m_house.FlipFirstCard();
     for (pPlayer = m_players.begin(); pPlayer !=m_players.end(); ++pPlayer){
-        cout<<pPlayer->getName()<<endl;
+        res +="Player: " +pPlayer->getName() + "\n";
     }
     cout<<m_house<<endl;
+    res +=  + ":\t";
     for (pPlayer = m_players.begin(); pPlayer !=m_players.end(); ++pPlayer){
+        if(m_deck.leftCards()<1){
+            m_deck.populate();
+            m_deck.shuffle();
+        }
         m_deck.AddCard(*pPlayer);
     }
     m_house.FlipFirstCard();
     cout<<endl<<m_house;
     m_deck.AddCard(m_house);
+
     if(m_house.bosted()){
+        res += "DEALER lose with " + std::to_string(m_house.getvalue()) + "\n";
         for (pPlayer = m_players.begin(); pPlayer !=m_players.end(); ++pPlayer){
-            if(!(pPlayer->bosted()))
+            if(!(pPlayer->bosted())){
                 pPlayer->win();
+                res += pPlayer->getName() + "WIN with " + std::to_string(pPlayer->getvalue()) + "\n";
+            }
+            else
+                res += pPlayer->getName() + " LOSE with " + std::to_string(pPlayer->getvalue())+ "\n";
+
         }
     }
     else{
+        res += "DEALER get " + std::to_string(m_house.getvalue()) + "\n";
         for (pPlayer = m_players.begin(); pPlayer !=m_players.end(); ++pPlayer){
             if(pPlayer->getvalue() > m_house.getvalue()){
                 pPlayer->win();
+                res += pPlayer->getName() + "WIN with " + std::to_string(pPlayer->getvalue()) + "\n";
+
             }
             if(pPlayer->getvalue() < m_house.getvalue()){
                 pPlayer->lose();
+                res += pPlayer->getName() + " LOSE with " + std::to_string(pPlayer->getvalue())+ "\n";
             }
             if(pPlayer->getvalue() == m_house.getvalue()){
                 pPlayer->push();
+                res += pPlayer->getName() + " PUSH with " + std::to_string(pPlayer->getvalue())+ "\n";
+
             }
         }
     }
@@ -183,7 +204,16 @@ void game::play(){
         pPlayer->clear();
     }
     m_house.clear();
-};
+    return res;
+}
+
+void game::reSetPlayers(vector<string> names)
+    {
+    qDebug()<<"im here";
+    m_players.clear();
+    for(int i =0; i<names.size(); i++)
+        m_players.push_back(player(names.at(i)));
+    };
 
 
 

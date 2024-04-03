@@ -1,7 +1,9 @@
 #pragma once
 
+#include "qdebug.h"
 #include <vector>
 #include <iostream>
+#include <QString>
 using namespace std;
 
 //class card
@@ -30,6 +32,7 @@ public:
     void clear();
     int getvalue() const;
     void Add(class Card *c);
+    int leftCards(){return m_cards.size();}
 
 
 };
@@ -48,7 +51,9 @@ protected:
 //class player
 class player : public GenPlayer{
 public:
-    player(const string& name=""){};
+    player(const string& name=""){
+        m_name = name;
+    };
     virtual ~player() = default;
     bool IsHitting() const;
     void win() const;
@@ -74,15 +79,24 @@ public:
     void Deal(hand& aHand);
     void AddCard(GenPlayer& aGenP);
 };
+
+class abstrGame{
+public:
+    abstrGame(){};
+    virtual ~abstrGame() =0;
+    virtual QString play() =0;
+    virtual void reSetPlayers(vector<string> names)=0;
+};
 //class game
 class game{
 public:
     game(const vector<string>& name);
-    virtual ~game() = default;
-    void play();
+    virtual ~game(){qDebug()<<"dying";};
+    string play();
+    void reSetPlayers(vector<string> names);
 private:
     deck m_deck;
     house m_house;
-    vector<player> m_players;
+    vector<player> m_players{};
 };
 
