@@ -126,8 +126,7 @@ void deck::Deal(hand &aHand){
         this->populate();
         this->shuffle();
         }
-    }
-}
+};
 void deck::AddCard(GenPlayer& aGenP){
     cout<<endl;
     while (!(aGenP.bosted()) && aGenP.IsHitting()){

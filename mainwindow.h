@@ -27,7 +27,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<std::string> names{"bigBob", "bob"};
+    std::vector<std::string> names{};
     std::shared_ptr<game> mGame = std::make_shared<game>(names);
     //TODO need to be abstract and polymorph.
     //std::shared_ptr<abstrGame> mGame = dynamic_pointer_cast<abstrGame>(make_shared<game>(game(names)));
