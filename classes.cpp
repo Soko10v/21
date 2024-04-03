@@ -1,5 +1,6 @@
 #include "classes.h"
 
+#include <random>
 #include <QDebug>
 ////////////////card/////////////
 Card::Card(rank r , suit s, bool fu) : m_rank(r), m_suit(s), m_face(fu){}
@@ -111,8 +112,8 @@ void deck::populate(){
     }
 };
 void deck::shuffle(){
-    //TODO no shaffle!
-    //random_shuffle()(m_cards.begin(), m_cards.end());
+    auto rhg = std::default_random_engine{};
+    std::shuffle(m_cards.begin(), m_cards.end(),rhg);
 };
 void deck::Deal(hand &aHand){
     if(!m_cards.empty()){
@@ -121,6 +122,10 @@ void deck::Deal(hand &aHand){
     }
     else{
         cout<<"out of cards";
+
+        this->populate();
+        this->shuffle();
+        }
     }
 }
 void deck::AddCard(GenPlayer& aGenP){
